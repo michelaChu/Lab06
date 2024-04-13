@@ -46,7 +46,8 @@ class View(ft.UserControl):
         self.dd_retailer = ft.Dropdown(width=500,
                                    hint_text="Filtro per retailer",
                                    label="retailer",
-                                   options=[ft.dropdown.Option(text="Nessun filtro",
+                                   options=[ft.dropdown.Option(key="None",
+                                                               text="Nessun filtro",
                                                                data=None,
                                                                on_click=self._controller.read_retailer)])
         self._controller.populate_dd_retailer()

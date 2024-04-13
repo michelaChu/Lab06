@@ -11,14 +11,14 @@ class Controller:
         self._model = model
         self._anno = None
         self._brand = None
-        self._retailer = None
+        self._retailer_code = None
 
     def handle_top_vendite(self, e):
         """
         funzione che recupera le prime 5 (per ricavo) vendite presenti nel database, con i vincoli
         dati dal menu a tendina, e stampa i risultati nella GUI
         """
-        top_vendite = self._model.get_top_sales(self._anno, self._brand, self._retailer)
+        top_vendite = self._model.get_top_sales(self._anno, self._brand, self._retailer_code)
         self._view.lst_result.controls.clear()
         if len(top_vendite) == 0:
             self._view.lst_result.controls.append(ft.Text("Nessuna vendita con i filtri selezionati"))
@@ -33,7 +33,7 @@ class Controller:
             funzione che stampa nella GUI delle statistiche sommarie di tutte le vendite presenti nel
             database con i vincoli specificati dai menu a tendina
         """
-        statistiche_vendite = self._model.get_sales_stats(self._anno, self._brand, self._retailer)
+        statistiche_vendite = self._model.get_sales_stats(self._anno, self._brand, self._retailer_code)
         self._view.lst_result.controls.clear()
         self._view.lst_result.controls.append(ft.Text("Satistiche vendite:"))
         self._view.lst_result.controls.append(ft.Text(f"Giro d'affari: {statistiche_vendite[0]}"))
@@ -98,8 +98,7 @@ class Controller:
         """
         retailers = self._model.get_retailers()
         for retailer in retailers:
-            self._view.dd_retailer.options.append(ft.dropdown.Option(key=retailer.retailer_code,
-                                                                     text=retailer.retailer_name,
+            self._view.dd_retailer.options.append(ft.dropdown.Option(text=retailer.retailer_name,
                                                                      data=retailer,
                                                                      on_click=self.read_retailer))
         self._view.update_page()
@@ -108,6 +107,9 @@ class Controller:
         """event handler che legge il retailer scelto dal menu a tendina ogniqualvolta viene cliccata una opzione.
         In questo caso andiamo a leggere direttamente l'oggetto, contenuto nel campo data dell'opzione.
         """
-        self._retailer = e.control.data
+        if e.control.data is None:
+            self._retailer_code = None
+        else:
+            self._retailer_code = e.control.data.retailer_code
 
 

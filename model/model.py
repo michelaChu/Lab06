@@ -47,22 +47,22 @@ class Model:
     ################################################################################
     ################################################################################
 
-    def get_top_sales(self, anno, brand, retailer) -> list[Sale]:
+    def get_top_sales(self, anno, brand, retailer_code) -> list[Sale]:
         """
             Funzione che legge dal dal dao le vendite con i filtri selezionati,
             e ne restituisce le prime 5 (se presenti) ordinate per ricavo decrescente
         """
-        filtered_sales = self._sales_dao.get_filtered_sales(anno, brand, retailer)
+        filtered_sales = self._sales_dao.get_filtered_sales(anno, brand, retailer_code)
         filtered_sales.sort(reverse=True)
         return filtered_sales[1:6]
 
-    def get_sales_stats(self, anno, brand, retailer):
+    def get_sales_stats(self, anno, brand, retailer_code):
         """
             Funzione che legge dal dal dao le vendite con i filtri selezionati,
             e ne restituisce le prime 5 (se presenti) ordinate per ricavo decrescente
         """
-        sales = self._sales_dao.get_filtered_sales(anno, brand, retailer)
-        ricavo_totale = sum([sale.ricavo for sale in sales])
-        retailers_involved = set([sale.retailer_code for sale in sales])
-        product_involved = set([sale.product_number for sale in sales])
-        return ricavo_totale, len(sales), len(retailers_involved), len(product_involved)
+        filtered_sales = self._sales_dao.get_filtered_sales(anno, brand, retailer_code)
+        ricavo_totale = sum([sale.ricavo for sale in filtered_sales])
+        retailers_involved = set([sale.retailer_code for sale in filtered_sales])
+        product_involved = set([sale.product_number for sale in filtered_sales])
+        return ricavo_totale, len(filtered_sales), len(retailers_involved), len(product_involved)

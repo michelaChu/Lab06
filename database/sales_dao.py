@@ -24,7 +24,7 @@ class SalesDao():
             print("Errore nella connessione")
             return None
 
-    def get_filtered_sales(self, anno, brand, retailer) -> list[Sale]:
+    def get_filtered_sales(self, anno, brand, retailer_code) -> list[Sale]:
         """
             Function that reads the database and returns the sales with the constraints specified by the input
             parameters
@@ -44,7 +44,7 @@ class SalesDao():
                 AND (YEAR(gds.Date)=COALESCE(%s,YEAR(gds.Date)))
                 AND (gp.Product_brand =COALESCE(%s,gp.Product_brand))
                 AND (gr.Retailer_code =COALESCE(%s,gr.Retailer_code))"""
-            cursor.execute(query, (anno, brand, retailer.retailer_code,))
+            cursor.execute(query, (anno, brand, retailer_code,))
             result = []
             for row in cursor:
                 result.append(Sale(row["Date"],
