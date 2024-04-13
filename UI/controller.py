@@ -18,7 +18,14 @@ class Controller:
         funzione che recupera le prime 5 (per ricavo) vendite presenti nel database, con i vincoli
         dati dal menu a tendina, e stampa i risultati nella GUI
         """
+        self._view.pr_ring.visible = True
+        self._view.btn_top_vendite.disabled = True
+        self._view.btn_analizza_vendite.disabled = True
+        self._view.update_page()
         top_vendite = self._model.get_top_sales(self._anno, self._brand, self._retailer)
+        self._view.pr_ring.visible = False
+        self._view.btn_top_vendite.disabled = False
+        self._view.btn_analizza_vendite.disabled = False
         self._view.lst_result.controls.clear()
         if len(top_vendite) == 0:
             self._view.lst_result.controls.append(ft.Text("Nessuna vendita con i filtri selezionati"))
@@ -27,13 +34,19 @@ class Controller:
                 self._view.lst_result.controls.append(ft.Text(vendita))
         self._view.update_page()
 
-
     def handle_analizza_vendite(self, e):
         """
             funzione che stampa nella GUI delle statistiche sommarie di tutte le vendite presenti nel
             database con i vincoli specificati dai menu a tendina
         """
+        self._view.pr_ring.visible = True
+        self._view.btn_top_vendite.disabled = True
+        self._view.btn_analizza_vendite.disabled = True
+        self._view.update_page()
         statistiche_vendite = self._model.get_sales_stats(self._anno, self._brand, self._retailer)
+        self._view.pr_ring.visible = False
+        self._view.btn_top_vendite.disabled = False
+        self._view.btn_analizza_vendite.disabled = False
         self._view.lst_result.controls.clear()
         self._view.lst_result.controls.append(ft.Text("Satistiche vendite:"))
         self._view.lst_result.controls.append(ft.Text(f"Giro d'affari: {statistiche_vendite[0]}"))
@@ -42,13 +55,11 @@ class Controller:
         self._view.lst_result.controls.append(ft.Text(f"Numero prodotti coinvolti: {statistiche_vendite[3]}"))
         self._view.update_page()
 
-
     ################################################################################
     ################################################################################
     #######    Utilities per popolare/leggere i menu a tendina     #################
     ################################################################################
     ################################################################################
-
 
     ######### Dropdpwn Anno #############
     def populate_dd_anno(self):
@@ -56,17 +67,17 @@ class Controller:
         prendendo le informazioni dal database"""
         anni = self._model.get_years()
         for anno in anni:
-            self._view.dd_anno.options.append(ft.dropdown.Option(anno[0]))
+            self._view.dd_anno.options.append(ft.dropdown.Option(key=anno[0],
+                                                                 text=anno[0],
+                                                                 data=anno[0],
+                                                                 on_click=self.read_anno))
         self._view.update_page()
 
     def read_anno(self, e):
         """event handler che legge l'anno scelto dal menu a tendina ogniqualvolta viene cambiata
         la scelta, e lo memorizza in una variabile di instanza. L'anno è un intero, se si tratta di un anno,
         oppure un None se viene scelta l'opzione nessun filtro sull'anno"""
-        if e.control.value == "None":
-            self._anno = None
-        else:
-            self._anno = e.control.value
+        self._anno = e.control.data
 
     ######### Dropdpwn Brand #############
     def populate_dd_brand(self):
@@ -109,5 +120,3 @@ class Controller:
         In questo caso andiamo a leggere direttamente l'oggetto, contenuto nel campo data dell'opzione.
         """
         self._retailer = e.control.data
-
-

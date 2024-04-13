@@ -20,6 +20,7 @@ class View(ft.UserControl):
         self.btn_top_vendite = None
         self.btn_analizza_vendite = None
         self.lst_result = None
+        self.pr_ring = None
 
     def load_interface(self):
         # title
@@ -30,9 +31,9 @@ class View(ft.UserControl):
         self.dd_anno = ft.Dropdown(width=200,
                                    hint_text="Filtro per anno",
                                    label="anno",
-                                   options=[ft.dropdown.Option(key="None",
-                                                            text="Nessun filtro")],
-                                                            on_change=self._controller.read_anno)
+                                   options=[ft.dropdown.Option(text="Nessun filtro",
+                                                               data=None,
+                                                               on_click=self._controller.read_anno)])
         self._controller.populate_dd_anno()
 
         self.dd_brand = ft.Dropdown(width=200,
@@ -60,9 +61,13 @@ class View(ft.UserControl):
                                                  on_click=self._controller.handle_top_vendite)
         self.btn_analizza_vendite = ft.ElevatedButton(text="Analizza vendite",
                                                       on_click=self._controller.handle_analizza_vendite)
-        row2 = ft.Row([self.btn_top_vendite, self.btn_analizza_vendite],
+
+        self.pr_ring = ft.ProgressRing()
+        self.pr_ring.visible=False
+        row2 = ft.Row([self.btn_top_vendite, self.btn_analizza_vendite, self.pr_ring],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row2)
+
 
         # List View where the reply is printed
         self.lst_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)

@@ -8,11 +8,7 @@ from model.sale import Sale
 
 class Model:
     def __init__(self):
-        self._sales_dao = SalesDao()
-        self._products_dao = ProductsDao()
-        self._retailers_dao = RetailerssDao()
-        self.retailers_map = {}
-
+        self._sales_list = SalesDao.get_sales() # list with all the sales
 
     ################################################################################
     ################################################################################
@@ -24,22 +20,21 @@ class Model:
         Semplice metodo che chiede al dao gli anni delle vendite e li restituisce
         :return: una nested list di interi (gli anni delle vendite)
         """
-        return self._sales_dao.get_years()
+        return SalesDao.get_years()
 
     def get_brands(self):
         """
             Semplice metodo che chiede al dao gli i brands dei prodotti e li restituisce
             :return: una nested list di stringhe (i brands dei prodotti)
         """
-        return self._products_dao.get_brands()
+        return ProductsDao.get_brands()
 
     def get_retailers(self) -> set[Retailer]:
         """
             Semplice metodo che chiede al dao gli i retailers e li restituisce
             :return: un set di Retailer (i brands dei prodotti)
         """
-        return self._retailers_dao.get_retailers(self.retailers_map)
-
+        return RetailerssDao.get_retailers()
 
     ################################################################################
     ################################################################################
@@ -47,12 +42,21 @@ class Model:
     ################################################################################
     ################################################################################
 
+    def get_filtered_sales(self, anno, brand, retailer):
+        filtered_sales = []
+        for listed_sale in self._sales_list:
+            if ((anno is None or listed_sale.get_year() == anno)
+                    and (brand is None or listed_sale.get_brand() == brand)
+                    and (retailer is None or listed_sale.get_retailer() == retailer)):
+                filtered_sales.append(listed_sale)
+        return filtered_sales
+
     def get_top_sales(self, anno, brand, retailer) -> list[Sale]:
         """
             Funzione che legge dal dal dao le vendite con i filtri selezionati,
             e ne restituisce le prime 5 (se presenti) ordinate per ricavo decrescente
         """
-        filtered_sales = self._sales_dao.get_filtered_sales(anno, brand, retailer)
+        filtered_sales = self.get_filtered_sales(anno, brand, retailer)
         filtered_sales.sort(reverse=True)
         return filtered_sales[1:6]
 
@@ -61,8 +65,8 @@ class Model:
             Funzione che legge dal dal dao le vendite con i filtri selezionati,
             e ne restituisce le prime 5 (se presenti) ordinate per ricavo decrescente
         """
-        sales = self._sales_dao.get_filtered_sales(anno, brand, retailer)
-        ricavo_totale = sum([sale.ricavo for sale in sales])
-        retailers_involved = set([sale.retailer_code for sale in sales])
-        product_involved = set([sale.product_number for sale in sales])
-        return ricavo_totale, len(sales), len(retailers_involved), len(product_involved)
+        filtered_sales = self.get_filtered_sales(anno, brand, retailer)
+        ricavo_totale = sum([sale.ricavo for sale in filtered_sales])
+        retailers_involved = set([sale.retailer_code for sale in filtered_sales])
+        product_involved = set([sale.product_number for sale in filtered_sales])
+        return ricavo_totale, len(filtered_sales), len(retailers_involved), len(product_involved)
