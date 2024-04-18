@@ -58,7 +58,7 @@ class Model:
         """
         filtered_sales = self.get_filtered_sales(anno, brand, retailer)
         filtered_sales.sort(reverse=True)
-        return filtered_sales[1:6]
+        return filtered_sales[0:5]
 
     def get_sales_stats(self, anno, brand, retailer):
         """
