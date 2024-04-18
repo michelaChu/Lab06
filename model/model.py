@@ -54,7 +54,7 @@ class Model:
         """
         filtered_sales = self._sales_dao.get_filtered_sales(anno, brand, retailer_code)
         filtered_sales.sort(reverse=True)
-        return filtered_sales[0:6]
+        return filtered_sales[0:5]
 
     def get_sales_stats(self, anno, brand, retailer_code):
         """
